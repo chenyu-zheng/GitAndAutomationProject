@@ -1,6 +1,7 @@
 const gulp = require('gulp');
 const autoprefixer = require('gulp-autoprefixer');
 const cleanCSS = require('gulp-clean-css');
+const imagemin = require('gulp-imagemin');
 
 
 gulp.task('css', () => {
@@ -10,4 +11,10 @@ gulp.task('css', () => {
         }))
         .pipe(cleanCSS())
         .pipe(gulp.dest('dist/css'));
+});
+
+gulp.task('image', () => {
+    return gulp.src('src/images/**/*.+(png|jpg|gif)')
+        .pipe(imagemin())
+        .pipe(gulp.dest('dist/images'));
 });
