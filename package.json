@@ -1,0 +1,23 @@
+{
+  "name": "git-and-automation",
+  "version": "1.0.0",
+  "description": "My final project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chenyu-zheng/GitAndAutomationProject.git"
+  },
+  "author": "Chenyu Zheng",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chenyu-zheng/GitAndAutomationProject/issues"
+  },
+  "homepage": "https://github.com/chenyu-zheng/GitAndAutomationProject#readme",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-autoprefixer": "^5.0.0"
+  }
+}
