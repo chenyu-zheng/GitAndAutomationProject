@@ -1,3 +1,5 @@
+'use strict';
+
 /* Engine.js
  * This file provides the game loop functionality (update entities and render),
  * draws the initial game board on the screen, and then calls the update and
@@ -13,34 +15,34 @@
  * writing app.js a little simpler to work with.
  */
 
-var Engine = (function(global) {
+var Engine = function (global) {
     /* Predefine the variables we'll be using within this scope,
      * create the canvas element, grab the 2D context for that canvas
      * set the canvas elements height/width and add it to the DOM.
      */
-    const doc = global.document;
-    const win = global.window;
-    const canvas = doc.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const restartBtn = document.querySelector('div.btn-restart');
-    const levelDisplay = document.querySelector('.level span');
-    const highestDisplay = document.querySelector('.highest-level span');
-    const lifeDisplay = document.querySelector('.life span');
+    var doc = global.document;
+    var win = global.window;
+    var canvas = doc.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var restartBtn = document.querySelector('div.btn-restart');
+    var levelDisplay = document.querySelector('.level span');
+    var highestDisplay = document.querySelector('.highest-level span');
+    var lifeDisplay = document.querySelector('.life span');
 
-    let lastTime;
-    let isPaused = false;
-    let textContent;
-    let textPosition = {x: 0, y: 0};
-    let currentLevel = 1;
-    let highestLevel = 0;
-    let extraLives = 2;
+    var lastTime = void 0;
+    var isPaused = false;
+    var textContent = void 0;
+    var textPosition = { x: 0, y: 0 };
+    var currentLevel = 1;
+    var highestLevel = 0;
+    var extraLives = 2;
 
-    let player;
-    let enemies;
-    let runLevel;
-    let clearLevel;
-    let getPlayer;
-    let getEnemies;
+    var player = void 0;
+    var enemies = void 0;
+    var runLevel = void 0;
+    var clearLevel = void 0;
+    var getPlayer = void 0;
+    var getEnemies = void 0;
 
     canvas.width = 707;
     canvas.height = 707;
@@ -66,7 +68,7 @@ var Engine = (function(global) {
         if (!isPaused) {
             update(dt);
         }
-        
+
         render();
 
         /* Set our lastTime variable which is used to determine the time delta
@@ -87,7 +89,7 @@ var Engine = (function(global) {
     function init() {
 
         // handles click on restart button
-        restartBtn.addEventListener('click', () => {
+        restartBtn.addEventListener('click', function () {
             isPaused = false;
             textContent = undefined;
             currentLevel = 1;
@@ -96,7 +98,7 @@ var Engine = (function(global) {
         });
 
         // init Levels
-        LevelMaker(global)
+        LevelMaker(global);
         runLevel = Levels.run;
         clearLevel = Levels.clear;
         getPlayer = Levels.getPlayer;
@@ -107,18 +109,17 @@ var Engine = (function(global) {
         main();
     }
 
-
-     /* This function does nothing but it could have been a good place to
-     * handle game reset states - maybe a new game menu or a game over screen
-     * those sorts of things. It's only called once by the init() method.
-     */
+    /* This function does nothing but it could have been a good place to
+    * handle game reset states - maybe a new game menu or a game over screen
+    * those sorts of things. It's only called once by the init() method.
+    */
     function reset() {
 
         // clear the previous level's data
         clearLevel();
         player = undefined;
-        enemies = []
-        
+        enemies = [];
+
         // if no more lives left, a player lost the game
         if (extraLives < 0) {
             showText('YOU LOST!', 110, 285, -1, '72px Nosifer', 'black');
@@ -130,16 +131,16 @@ var Engine = (function(global) {
         lifeDisplay.textContent = extraLives;
 
         // run the next level
-        let hasLevel = runLevel(currentLevel - 1); 
+        var hasLevel = runLevel(currentLevel - 1);
 
         if (hasLevel) {
             // displays current level
             levelDisplay.textContent = currentLevel;
             pause(1500);
-            showText(`LEVEL ${currentLevel}`, 265, 285, 1500, '72px Creepster', 'red');
+            showText('LEVEL ' + currentLevel, 265, 285, 1500, '72px Creepster', 'red');
             player = getPlayer();
             enemies = getEnemies();
-        // if no more levels left, a player won the game
+            // if no more levels left, a player won the game
         } else {
             showText('YOU WON!', 195, 292, -1, '96px Creepster', 'white');
             return;
@@ -175,26 +176,26 @@ var Engine = (function(global) {
     function updateEntities(dt) {
 
         player.update(dt);
-        enemies.forEach(sprite => sprite.update(dt));
+        enemies.forEach(function (sprite) {
+            return sprite.update(dt);
+        });
     }
-
 
     /**
      * checks if player collide with an enemy
      */
     function checkCollisions() {
 
-        enemies.forEach(e => {
+        enemies.forEach(function (e) {
 
-            if (Math.abs(e.x - player.x) < Math.min(e.collisionWidth, player.collisionWidth) &&
-                Math.abs(e.y - player.y) < Math.min(e.collisionHeight, player.collisionHeight)) {
-                
+            if (Math.abs(e.x - player.x) < Math.min(e.collisionWidth, player.collisionWidth) && Math.abs(e.y - player.y) < Math.min(e.collisionHeight, player.collisionHeight)) {
+
                 // if collision happens, a player loses 1 life
                 extraLives--;
                 pause(3000);
                 showText('YOU DIED', 125, 285, 1500, '72px Nosifer', 'red');
 
-                setTimeout(() => {
+                setTimeout(function () {
                     reset();
                 }, 1600);
 
@@ -209,15 +210,14 @@ var Engine = (function(global) {
     function checkGoal() {
         if (player.y === 0) {
 
-            
             if (highestLevel < currentLevel) {
                 highestLevel = currentLevel;
             }
             currentLevel++;
             pause(2200);
             showText('LEVEL COMPLETE', 155, 285, 2000, '72px Creepster', 'white');
-            
-            setTimeout(() => {
+
+            setTimeout(function () {
                 reset();
             }, 2100);
 
@@ -235,21 +235,20 @@ var Engine = (function(global) {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
-        var rowImages = [
-                'images/Stone Block.png',   // Top row is water
-                'images/Grass Block.png',   // Row 1 of 3 of stone
-                'images/Grass Block.png',   // Row 2 of 3 of stone
-                'images/Grass Block.png',   // Row 3 of 3 of stone
-                'images/Grass Block.png',   // Row 1 of 2 of grass
-                'images/Grass Block.png',    // Row 2 of 2 of grass
-                'images/Stone Block.png'
-            ],
+        var rowImages = ['images/Stone Block.png', // Top row is water
+        'images/Grass Block.png', // Row 1 of 3 of stone
+        'images/Grass Block.png', // Row 2 of 3 of stone
+        'images/Grass Block.png', // Row 3 of 3 of stone
+        'images/Grass Block.png', // Row 1 of 2 of grass
+        'images/Grass Block.png', // Row 2 of 2 of grass
+        'images/Stone Block.png'],
             numRows = 7,
             numCols = 7,
-            row, col;
-        
+            row,
+            col;
+
         // Before drawing, clear existing canvas
-        ctx.clearRect(0,0,canvas.width,canvas.height)
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         /* Loop through the number of rows and columns we've defined above
          * and, using the rowImages array, draw the correct image for that
@@ -281,13 +280,15 @@ var Engine = (function(global) {
      * on your enemy and player entities within app.js
      */
     function renderEntities() {
-        
+
         // updates only when units exist
         if (player) {
             player.render();
         }
         if (enemies.length > 0) {
-            enemies.forEach(sprite => sprite.render());
+            enemies.forEach(function (sprite) {
+                return sprite.render();
+            });
         }
     }
 
@@ -295,14 +296,17 @@ var Engine = (function(global) {
      * shows a text on the canvas
      * if timeMS is less than 0, text will not automatically disappear
      */
-    function showText(text, x, y, timeMS, font = '72px sans-serif', color = 'red') {
+    function showText(text, x, y, timeMS) {
+        var font = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '72px sans-serif';
+        var color = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 'red';
+
         ctx.fillStyle = color;
         ctx.font = font;
         textContent = text;
         textPosition.x = x;
         textPosition.y = y;
         if (timeMS >= 0) {
-            setTimeout(() => {
+            setTimeout(function () {
                 textContent = undefined;
             }, timeMS);
         }
@@ -313,7 +317,7 @@ var Engine = (function(global) {
      */
     function pause(timeMS) {
         isPaused = true;
-        setTimeout(() => {
+        setTimeout(function () {
             isPaused = false;
         }, timeMS);
     }
@@ -322,17 +326,7 @@ var Engine = (function(global) {
      * draw our game level. Then set init as the callback method, so that when
      * all of these images are properly loaded our game will start.
      */
-    Resources.load([
-        'images/Stone Block.png',
-        'images/Grass Block.png',
-        'images/Cat Girl.png',
-        'images/Goul.png',
-        'images/Orc.png',
-        'images/Murloc.png',
-        'images/Wolf.png',
-        'images/Spider.png',
-        'images/Werewolf.png'
-    ]);
+    Resources.load(['images/Stone Block.png', 'images/Grass Block.png', 'images/Cat Girl.png', 'images/Goul.png', 'images/Orc.png', 'images/Murloc.png', 'images/Wolf.png', 'images/Spider.png', 'images/Werewolf.png']);
     Resources.onReady(init);
 
     /* Assign the canvas' context object to the global variable (the window
@@ -340,4 +334,4 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
-})(window);
+}(window);
