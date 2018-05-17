@@ -5,6 +5,7 @@ const imagemin = require('gulp-imagemin');
 const babel = require('gulp-babel');
 const concat = require('gulp-concat');
 const uglify = require('gulp-uglify');
+const htmlbuild = require('gulp-htmlbuild');
 
 
 gulp.task('css', () => {
@@ -35,8 +36,19 @@ gulp.task('js', () => {
         .pipe(gulp.dest('dist/js'));
 });
 
+gulp.task('html', () => {
+    return gulp.src('src/index.html')
+        .pipe(htmlbuild({
+            js: htmlbuild.preprocess.js((block) => {
+                block.write('js/main.js');
+                block.end();
+            })
+        }))
+        .pipe(gulp.dest('dist'));
+});
+
 gulp.task('watch', () => {
     gulp.watch('src/css/**/*.css', ['css']);
 });
 
-gulp.task('default', ['css', 'js', 'image', 'watch']);
+gulp.task('default', ['html', 'css', 'js', 'image', 'watch']);
